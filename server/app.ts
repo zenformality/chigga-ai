@@ -65,7 +65,6 @@ app.use(express.json());
 
 const apiRouter = express.Router();
 app.use('/api', apiRouter);
-app.use('/', apiRouter);
 
 // Root health check
 apiRouter.get('/health', (req, res) => {
@@ -194,6 +193,7 @@ apiRouter.post('/characters', async (req, res) => {
 
 // Session routes
 apiRouter.get('/sessions', async (req, res) => {
+  if (!process.env.DATABASE_URL) return res.json([]);
   const { authorId } = req.query;
   if (!authorId) return res.status(400).json({ error: "authorId required" });
   
@@ -224,6 +224,7 @@ apiRouter.get('/sessions', async (req, res) => {
 });
 
 apiRouter.post('/sessions', async (req, res) => {
+  if (!process.env.DATABASE_URL) return res.json({ success: true, warning: 'No database configured' });
   const { id, characterId, authorId, updatedAt, messages } = req.body;
   try {
     await pool.query('BEGIN');
@@ -255,6 +256,7 @@ apiRouter.post('/sessions', async (req, res) => {
 });
 
 apiRouter.delete('/sessions/:id', async (req, res) => {
+  if (!process.env.DATABASE_URL) return res.json({ success: true, warning: 'No database configured' });
   const { id } = req.params;
   try {
     await pool.query('DELETE FROM sessions WHERE id = $1', [id]);
