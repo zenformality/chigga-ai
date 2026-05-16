@@ -1,0 +1,54 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidCharacter(data) {
+      return data.keys().hasAll(['id', 'name', 'description', 'avatar', 'systemPrompt', 'theme', 'authorId', 'authorName', 'isPublic', 'createdAt'])
+        && data.keys().size() >= 10
+        && data.id is string
+        && data.name is string && data.name.size() > 0 && data.name.size() <= 100
+        && data.description is string && data.description.size() <= 1000
+        && data.avatar is string && data.avatar.size() <= 1000
+        && data.systemPrompt is string && data.systemPrompt.size() <= 20000
+        && data.theme is string
+        && data.authorId == request.auth.uid
+        && data.authorName is string
+        && data.isPublic is bool
+        && data.createdAt is number;
+    }
+
+    match /characters/{characterId} {
+      allow read: if isSignedIn();
+      
+      allow create: if isSignedIn() && isValidCharacter(incoming());
+      
+      allow update: if isSignedIn() 
+        && existing().authorId == request.auth.uid
+        && incoming().authorId == request.auth.uid 
+        && isValidCharacter(incoming())
+        && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'description', 'avatar', 'systemPrompt', 'theme', 'isPublic', 'isCustom']);
+        
+      allow delete: if isSignedIn() && existing().authorId == request.auth.uid;
+    }
+  }
+}

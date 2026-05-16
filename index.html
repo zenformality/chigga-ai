@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chigga ai</title>
+  </head>
+  <body>
+    <script>
+      // Guard against libraries trying to overwrite read-only window.fetch in the iframe environment
+      (function() {
+        try {
+          const nativeFetch = window.fetch;
+          Object.defineProperty(window, 'fetch', {
+            get: function() { return nativeFetch; },
+            set: function() { /* No-op to prevent assignment errors */ },
+            configurable: true
+          });
+        } catch (e) {
+          // Fallback if defineProperty fails
+        }
+      })();
+    </script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

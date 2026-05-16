@@ -1,0 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Pinyon+Script&family=Inter:wght@300;400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-noir-950: #050505;
+  --color-noir-900: #0a0a0a;
+  --color-noir-800: #121010;
+  --color-noir-700: #1a1818;
+  --color-gold-500: #c5a059;
+  --color-gold-400: #d4b886;
+  
+  --font-serif: "Cormorant Garamond", serif;
+  --font-script: "Pinyon Script", cursive;
+  --font-sans: "Inter", sans-serif;
+}
+
+@layer base {
+  body {
+    @apply font-sans bg-noir-950 text-white/90 antialiased;
+  }
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  /* Neural bit animation for loading */
+  @keyframes neural-pulse {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+
+  .neural-bit {
+    animation: neural-pulse 1.2s infinite ease-in-out;
+  }
+
+  .markdown-body {
+    @apply text-inherit leading-relaxed;
+  }
+  .markdown-body p {
+    @apply mb-4 last:mb-0;
+  }
+}

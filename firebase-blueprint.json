@@ -1,0 +1,29 @@
+{
+  "entities": {
+    "Character": {
+      "title": "Character",
+      "description": "An AI character archetype.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "avatar": { "type": "string" },
+        "systemPrompt": { "type": "string" },
+        "theme": { "type": "string" },
+        "isCustom": { "type": "boolean" },
+        "authorId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "isPublic": { "type": "boolean" },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["id", "name", "description", "avatar", "systemPrompt", "theme", "authorId", "authorName", "isPublic", "createdAt"]
+    }
+  },
+  "firestore": {
+    "characters": {
+      "schema": "Character",
+      "description": "Publicly shared characters."
+    }
+  }
+}

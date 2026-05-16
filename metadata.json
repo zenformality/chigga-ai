@@ -1,0 +1,8 @@
+{
+  "name": "Remix: chigga",
+  "description": "A character AI chat platform with dark glassmorphism design and advanced AI personalities.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
