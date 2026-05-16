@@ -65,6 +65,7 @@ app.use(express.json());
 
 const apiRouter = express.Router();
 app.use('/api', apiRouter);
+app.use('/', apiRouter);
 
 // Root health check
 apiRouter.get('/health', (req, res) => {
