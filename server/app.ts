@@ -2,6 +2,8 @@ import express from "express";
 import { Pool } from "pg";
 import dotenv from "dotenv";
 import * as cheerio from 'cheerio';
+import multer from 'multer';
+import { Storage, File } from 'megajs';
 import { generateGeminiResponse, generateHFResponse, enhanceCharacter, enhanceField, generateGreeting } from "./ai.js";
 
 dotenv.config();
@@ -75,10 +77,70 @@ async function initDb() {
 initDb().catch(console.error);
 
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 const apiRouter = express.Router();
 app.use('/api', apiRouter);
+
+// Set up multer for memory storage
+const upload = multer({ storage: multer.memoryStorage() });
+
+apiRouter.post('/upload', upload.single('file'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file provided" });
+  }
+
+  // Generate data URL as fallback if Mega is not configured
+  const fallbackDataUrl = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+
+  if (!process.env.MEGA_EMAIL || !process.env.MEGA_PASSWORD) {
+    // If no mega credentials, fallback to data url
+    return res.json({ url: fallbackDataUrl });
+  }
+
+  try {
+    const storage = await new Storage({
+      email: process.env.MEGA_EMAIL,
+      password: process.env.MEGA_PASSWORD,
+      keepalive: false
+    }).ready;
+
+    const fileInfo = await storage.upload({
+      name: req.file.originalname,
+      size: req.file.size
+    }, req.file.buffer).complete;
+
+    const link = await fileInfo.link();
+    // Return Mega link wrapped in our proxy so it can be displayed as an image src
+    const proxyUrl = `/api/mega-image?url=${encodeURIComponent(link)}`;
+    res.json({ url: proxyUrl, isMega: true });
+  } catch (error) {
+    console.error("Mega Upload Error:", error);
+    // Silent fallback to base64 if Mega fails
+    res.json({ url: fallbackDataUrl, error: "Mega failed, using fallback" });
+  }
+});
+
+apiRouter.get('/mega-image', async (req, res) => {
+  const url = req.query.url as string;
+  if (!url) return res.status(400).send("No url provided");
+  
+  try {
+    const file = File.fromURL(url);
+    await file.loadAttributes();
+    
+    // Set headers
+    res.setHeader('Content-Type', 'image/jpeg'); // default fallback or try to infer from file name
+    res.setHeader('Cache-Control', 'public, max-age=31536000');
+    
+    // Stream decryption direct to client
+    file.download().pipe(res);
+  } catch (error) {
+    console.error("Mega image proxy error:", error);
+    res.status(500).send("Failed to load image");
+  }
+});
 
 // Root health check
 apiRouter.get('/health', (req, res) => {
@@ -202,6 +264,24 @@ apiRouter.post('/characters', async (req, res) => {
   } catch (error) {
     console.error("Characters POST Error:", error);
     res.status(500).json({ error: "Failed to insert character" });
+  }
+});
+
+apiRouter.delete('/characters/:id', async (req, res) => {
+  if (!process.env.DATABASE_URL) {
+    return res.status(500).json({ error: "Database not configured" });
+  }
+  const { id } = req.params;
+  try {
+    await pool.query('BEGIN');
+    await pool.query('DELETE FROM sessions WHERE character_id = $1', [id]);
+    await pool.query('DELETE FROM characters WHERE id = $1', [id]);
+    await pool.query('COMMIT');
+    res.json({ success: true });
+  } catch (error) {
+    await pool.query('ROLLBACK');
+    console.error("Characters DELETE Error:", error);
+    res.status(500).json({ error: "Failed to delete character" });
   }
 });
 

@@ -27,6 +27,7 @@ export default function App() {
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
   const [isSelectingCharacter, setIsSelectingCharacter] = useState(false);
   const [isCreatingCharacter, setIsCreatingCharacter] = useState(false);
+  const [editingCharacter, setEditingCharacter] = useState<Character | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [registryTab, setRegistryTab] = useState<'personal' | 'global'>('personal');
 
@@ -293,6 +294,8 @@ export default function App() {
                         <CharacterCard 
                           character={character} 
                           onSelect={createSession} 
+                          isOwner={character.authorId === user?.uid}
+                          onEdit={setEditingCharacter}
                         />
                       </div>
                     ))
@@ -357,24 +360,52 @@ export default function App() {
       </main>
 
       <AnimatePresence>
-        {isCreatingCharacter && (
+        {(isCreatingCharacter || editingCharacter) && (
           <CreateCharacterModal 
-            onClose={() => setIsCreatingCharacter(false)}
+            initialData={editingCharacter || undefined}
+            onClose={() => {
+              setIsCreatingCharacter(false);
+              setEditingCharacter(null);
+            }}
+            onDelete={async (id, isPublic) => {
+              setLocalCharacters(prev => prev.filter(c => c.id !== id));
+              
+              if (activeSessionId && sessions.find(s => s.id === activeSessionId)?.characterId === id) {
+                 clearChat();
+              }
+
+              try {
+                await fetch(`/api/characters/${id}`, { method: 'DELETE' });
+                refetchCharacters();
+              } catch (e) {
+                console.error(e);
+              }
+              
+              setIsCreatingCharacter(false);
+              setEditingCharacter(null);
+            }}
             onSave={(char) => {
               // Add to local immediately for instant UI update
-              setLocalCharacters(prev => [...prev, char]);
+              setLocalCharacters(prev => {
+                const filtered = prev.filter(p => p.id !== char.id);
+                return [...filtered, char];
+              });
               
-              const savePromise = !char.isPublic ? 
-                 fetch('/api/characters', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(char)
-                 }) : Promise.resolve();
+              const savePromise = fetch('/api/characters', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(char)
+              });
 
               savePromise.then(() => refetchCharacters()).catch(console.error);
 
               setIsCreatingCharacter(false);
-              createSession(char);
+              setEditingCharacter(null);
+              // Only create a new session if they just created it,
+              // for editing we might already be in a session with them or we should just close modal
+              if (!editingCharacter) {
+                createSession(char);
+              }
             }}
           />
         )}
