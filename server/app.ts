@@ -2,7 +2,7 @@ import express from "express";
 import { Pool } from "pg";
 import dotenv from "dotenv";
 import * as cheerio from 'cheerio';
-import { generateGeminiResponse, generateHFResponse, enhanceCharacter, enhanceField, generateGreeting } from "./ai";
+import { generateGeminiResponse, generateHFResponse, enhanceCharacter, enhanceField, generateGreeting } from "./ai.js";
 
 dotenv.config();
 
