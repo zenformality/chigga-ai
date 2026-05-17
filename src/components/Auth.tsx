@@ -45,10 +45,10 @@ export default function Auth() {
 
             <div className="space-y-10 relative z-10">
               <div className="space-y-4">
-                <div className="flex items-center justify-center gap-4">
-                  <div className="w-16 h-16 border border-gold-500 flex items-center justify-center font-serif text-gold-500 text-3xl italic shadow-[0_0_30px_rgba(197,160,89,0.15)]">C</div>
-                  <h1 className="text-6xl font-serif text-white tracking-[0.2em] uppercase">
-                    Chigga ai
+                <div className="flex flex-col items-center justify-center gap-6">
+                  <img src="/logo.png" alt="Chigga AI Logo" className="w-32 h-32 object-contain" />
+                  <h1 className="text-4xl md:text-5xl font-serif text-white tracking-[0.2em] uppercase">
+                    Chigga AI
                   </h1>
                 </div>
                 <div className="h-px w-24 bg-gold-500/50 mx-auto mt-2" />

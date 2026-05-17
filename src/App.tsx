@@ -233,8 +233,8 @@ export default function App() {
                     <Menu size={28} strokeWidth={1} />
                   </button>
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full border border-gold-500/20 flex items-center justify-center font-serif text-gold-500 text-lg italic">C</div>
-                    <h1 className="font-serif text-3xl text-white tracking-widest uppercase">Chigga ai</h1>
+                    <img src="/logo.png" alt="Chigga AI Logo" className="w-8 h-8 object-contain" />
+                    <h1 className="font-serif text-3xl text-white tracking-widest uppercase">Chigga AI</h1>
                   </div>
                 </div>
 
@@ -338,7 +338,10 @@ export default function App() {
 
               <div className="relative group">
                 <div className="absolute inset-x-0 h-px bg-gradient-to-r from-transparent via-gold-500/20 to-transparent -top-10" />
-                <h3 className="text-4xl md:text-6xl font-serif text-white tracking-widest italic opacity-80">Welcome to Chigga ai</h3>
+                <div className="flex flex-col items-center justify-center gap-6">
+                  <img src="/logo.png" alt="Chigga AI Logo" className="w-32 h-32 md:w-48 md:h-48 object-contain opacity-80" />
+                  <h3 className="text-3xl md:text-5xl font-serif text-white tracking-widest uppercase opacity-80 text-center">Welcome to Chigga AI</h3>
+                </div>
                 <div className="absolute inset-x-0 h-px bg-gradient-to-r from-transparent via-gold-500/20 to-transparent -bottom-10" />
               </div>
 

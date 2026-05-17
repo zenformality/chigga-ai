@@ -36,8 +36,8 @@ export default function Sidebar({
       <div className="flex flex-col gap-1 mb-12">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 border border-gold-500/30 flex items-center justify-center font-serif text-gold-500 text-xl italic shadow-[0_0_15px_rgba(197,160,89,0.1)]">C</div>
-            <h1 className="font-serif text-3xl text-white tracking-widest uppercase">Chigga </h1>
+            <img src="/logo.png" alt="Chigga AI Logo" className="w-10 h-10 object-contain" />
+            <h1 className="font-serif text-2xl text-white tracking-widest uppercase truncate">Chigga AI</h1>
           </div>
           <button 
             onClick={() => setShowSettings(true)}

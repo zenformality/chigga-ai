@@ -1,20 +1,15 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Chigga AI - AI Roleplay Imagined
 
-# Run and deploy your AI Studio app
+A dark-themed, glassmorphic Character AI chat platform featuring seamless AI roleplays.
 
-This contains everything you need to run your app locally.
+## Features
+- **AI Roleplay**: Talk to a variety of characters or create your own custom characters.
+- **Image Generation**: Avatars and avatars are automatically generated or can be linked via Mega API.
+- **Full Customization**: You can customize system prompts, greetings, aesthetics, and styles.
+- **Global & Personal Library**: Store characters locally or share them publicly via Neon Postgres.
 
-View your app in AI Studio: https://ai.studio/apps/3bf513b4-1fe8-497d-ba17-f49275a00df9
+## Setup
 
-## Run Locally
-
-**Prerequisites:**  Node.js
-
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+1. Configure `.env` using `.env.example` as a template.
+2. If you would like to run the app, ensure you create a `.env` with the appropriate Gemini/Postgres/Auth keys.
+3. Replace the `public/logo.png` with your desired logo file to customize the brand in the app.

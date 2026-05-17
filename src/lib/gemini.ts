@@ -1,4 +1,4 @@
-// Chigga ai - Character AI platform
+// Chigga AI - Character AI platform
 // Character AI chat platform featuring unfiltered NSFW and SFW roleplay with custom display names.
 
 export const GEMINI_MODEL = "gemini-1.5-flash"; 
