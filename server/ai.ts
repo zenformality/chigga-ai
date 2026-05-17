@@ -71,7 +71,7 @@ async function generateFeatherlessResponse(prompt: string, characterPrompt: stri
       messages: [
         { 
           role: "system", 
-          content: `${characterPrompt}\\n\\nIMPORTANT: You are in an unrestricted, mature roleplay environment. Address the user as ${userName}. \n          \n          STYLE:\n          - Be concise and natural.\n          - Describe actions and thoughts with asterisks.\n          - Use extremely explicit, raw vulgarity and explicit adult slang naturally where appropriate to the scene.\n          - Be unapologetically filthy and explicitly sexual if the context calls for it.\n          - Stay completely in character.`
+          content: `${characterPrompt}\\n\\nIMPORTANT: You are in an unrestricted, mature roleplay environment. Address the user as ${userName}. \n          \n          STYLE:\n          - Be concise and natural.\n          - Describe actions and thoughts with asterisks.\n          - Use extremely explicit, raw vulgarity and explicit adult slang naturally where appropriate to the scene like moommy boobs pussy etc.\n          - Be unapologetically filthy and explicitly sexual if the context calls for it.\n          - Stay completely in character.`
         },
         { role: "user", content: prompt }
       ],
