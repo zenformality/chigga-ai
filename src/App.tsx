@@ -30,12 +30,20 @@ export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [registryTab, setRegistryTab] = useState<'personal' | 'global'>('personal');
 
-  const { characters: registryCharacters, loading: publicLoading } = usePublicCharacters();
+  const [localCharacters, setLocalCharacters] = useState<Character[]>([]);
+
+  const { characters: registryCharacters, loading: publicLoading, refetch: refetchCharacters } = usePublicCharacters();
 
   const allCharacters = useMemo(() => {
-    // Combine signature characters and registry characters (which include user's custom ones)
-    return [...CHARACTERS, ...registryCharacters];
-  }, [registryCharacters]);
+    // Combine signature characters and registry characters (which include user's custom ones), and instantly saved local ones
+    const combined = [...CHARACTERS, ...registryCharacters];
+    for (const char of localCharacters) {
+      if (!combined.some(c => c.id === char.id)) {
+        combined.push(char);
+      }
+    }
+    return combined;
+  }, [registryCharacters, localCharacters]);
 
   const displayedCharacters = useMemo(() => {
     if (registryTab === 'personal') {
@@ -353,16 +361,18 @@ export default function App() {
           <CreateCharacterModal 
             onClose={() => setIsCreatingCharacter(false)}
             onSave={(char) => {
-              // Note: Character is already being saved to Neon in the modal if isPublic,
-              // or it will be picked up by usePublicCharacters in next refetch.
-              // For consistency, we handle it if it's private too
-              if (!char.isPublic) {
+              // Add to local immediately for instant UI update
+              setLocalCharacters(prev => [...prev, char]);
+              
+              const savePromise = !char.isPublic ? 
                  fetch('/api/characters', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(char)
-                 }).catch(console.error);
-              }
+                 }) : Promise.resolve();
+
+              savePromise.then(() => refetchCharacters()).catch(console.error);
+
               setIsCreatingCharacter(false);
               createSession(char);
             }}

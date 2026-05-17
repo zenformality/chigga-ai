@@ -9,38 +9,30 @@ export function usePublicCharacters() {
   const [error, setError] = useState<Error | null>(null);
   const [user] = useAuthState(auth);
 
+  const fetchCharacters = async () => {
+    if (!user) return;
+    try {
+      setLoading(true);
+      const res = await fetch(`/api/characters?authorId=${user.uid}`);
+      if (!res.ok) throw new Error('Failed to fetch from registry');
+      const data = await res.json();
+      setCharacters(data);
+      setLoading(false);
+    } catch (err: any) {
+      console.error("Failed to fetch public archive:", err);
+      setError(err);
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!user) {
       setCharacters([]);
       setLoading(false);
       return;
     }
-
-    let isMounted = true;
-    
-    async function fetchCharacters() {
-      try {
-        setLoading(true);
-        const res = await fetch(`/api/characters?authorId=${user.uid}`);
-        if (!res.ok) throw new Error('Failed to fetch from registry');
-        const data = await res.json();
-        if (isMounted) {
-          setCharacters(data);
-          setLoading(false);
-        }
-      } catch (err: any) {
-        if (isMounted) {
-          console.error("Failed to fetch public archive:", err);
-          setError(err);
-          setLoading(false);
-        }
-      }
-    }
-
     fetchCharacters();
-
-    return () => { isMounted = false; };
   }, [user]);
 
-  return { characters, loading, error };
+  return { characters, loading, error, refetch: fetchCharacters };
 }
