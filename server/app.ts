@@ -31,6 +31,20 @@ async function initDb() {
       )
     `);
 
+    // Add new columns if this is an older DB
+    try {
+      await pool.query(`
+        ALTER TABLE characters ADD COLUMN IF NOT EXISTS greeting TEXT;
+        ALTER TABLE characters ADD COLUMN IF NOT EXISTS theme VARCHAR(255);
+        ALTER TABLE characters ADD COLUMN IF NOT EXISTS is_public BOOLEAN DEFAULT false;
+        ALTER TABLE characters ADD COLUMN IF NOT EXISTS author_id VARCHAR(255);
+        ALTER TABLE characters ADD COLUMN IF NOT EXISTS author_name VARCHAR(255);
+        ALTER TABLE characters ADD COLUMN IF NOT EXISTS created_at BIGINT;
+      `);
+    } catch(err) {
+      console.warn("DB migration warning: ", err);
+    }
+
     // Sessions table
     await pool.query(`
       CREATE TABLE IF NOT EXISTS sessions (
