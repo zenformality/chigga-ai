@@ -8,7 +8,7 @@ dotenv.config();
 // Gemini Setup
 const geminiApiKey = process.env.GEMINI_API_KEY;
 export const geminiAi = geminiApiKey ? new GoogleGenAI({ apiKey: geminiApiKey }) : null;
-export const GEMINI_MODEL = "gemini-1.5-flash";
+export const GEMINI_MODEL = "gemini-3-flash-preview";
 
 // Hugging Face Setup
 const hfToken = process.env.HUGGING_FACE_ACCESS_TOKEN || process.env.VITE_HUGGING_FACE_ACCESS_TOKEN;
